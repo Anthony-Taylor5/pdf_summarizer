@@ -21,6 +21,9 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 # Dictionary to store extracted text from PDFs
 pdf_texts = {}
 
+def normalize_filename(filename):
+    return filename.replace(" ", "_")
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -34,6 +37,12 @@ def extract_text_from_pdf(file_path):
                 page_text = pdf_reader.pages[page_num].extract_text()
                 if page_text:
                     text += page_text + "\n"
+
+        text_file_path = file_path + ".txt"
+        with open(text_file_path, "w", encoding="utf-8") as text_file:
+            text_file.write(text)
+
+
     except Exception as e:
         print(f"Error extracting text from PDF: {e}")
         print(traceback.format_exc())
@@ -78,6 +87,7 @@ def upload_pdf():
             
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
+            filename = normalize_filename(filename)  
             print(f"Secured filename: {filename}")
             
             # Check upload directory
@@ -143,7 +153,11 @@ def generate_summary():
     try:
         data = request.json
         pdf_name = data.get('pdf_name')
-        
+        pdf_name = normalize_filename(pdf_name)  # Normalize spaces
+    
+        print(f"Request received to generate summary for: {pdf_name}")
+        print(f"Current stored PDFs: {list(pdf_texts.keys())}")
+
         if not pdf_name or pdf_name not in pdf_texts:
             return jsonify({'error': 'PDF not found or not processed'}), 404
             
