@@ -5,3 +5,4 @@ __pycache__/
 instance/
 *.log
 *.sqlite3
+uploaded_pdfs/*

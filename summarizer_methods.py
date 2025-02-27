@@ -5,6 +5,7 @@ import tiktoken
 from openai import OpenAI
 from config import API_KEY
 
+
 # Initialize OpenAI client
 client = OpenAI(
     api_key=f"{API_KEY}"
@@ -416,7 +417,7 @@ def get_answers(question,file):
     prompt= generate_refined_answer(answer)
     refined_answer= process_prompt(prompt)
     #print("\n"+refined_answer)
-    formatted_output = f"<pre>{refined_answer}</pre>"
+    #formatted_output = f"<pre>{refined_answer}</pre>"
     return refined_answer
         
     
